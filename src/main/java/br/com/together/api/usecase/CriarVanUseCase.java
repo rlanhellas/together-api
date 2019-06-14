@@ -3,13 +3,19 @@ package br.com.together.api.usecase;
 import br.com.together.api.domain.entity.Usuario;
 import br.com.together.api.domain.entity.Van;
 import br.com.together.api.domain.valueobject.Contato;
+import br.com.together.api.usecase.port.EmailPort;
 import br.com.together.api.usecase.model.RequestCriacaoVan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CriarVanUseCase {
 
+    private final EmailPort emailPort;
     private Logger logger = LoggerFactory.getLogger(CriarVanUseCase.class);
+
+    public CriarVanUseCase(EmailPort emailPort) {
+        this.emailPort = emailPort;
+    }
 
     public void executar(RequestCriacaoVan requestCriacaoVan) {
         logger.info("Iniciando criação da Van.", requestCriacaoVan);
@@ -20,6 +26,8 @@ public class CriarVanUseCase {
     }
 
     private void enviarEmailContaCriada(Van van) {
-        logger.info("Preparando o envio do e-mail para "+van.getContato().getEmail());
+        logger.info("Preparando o envio do e-mail para " + van.getContato().getEmail());
+        emailPort.enviarEmail(van.getContato().getEmail(), "Conta Criada", "VAN " + van.getPlaca()
+                + ", SENHA " + van.getUsuario().getSenha());
     }
 }
